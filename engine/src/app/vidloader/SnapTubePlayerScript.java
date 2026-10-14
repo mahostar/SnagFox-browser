@@ -28,7 +28,8 @@ final class SnapTubePlayerScript {
     if(Looper.myLooper()==Looper.getMainLooper())throw new IllegalStateException("Player script must not block UI");
     if(patterns==null)try(InputStream input=context.getAssets().open("youtube/player_patterns.json")){patterns=new JSONObject(new String(YoutubeIO.readAll(input,256*1024),StandardCharsets.UTF_8));}
     String key=url;Engine engine=engines.get(key);
-    if(engine==null||engine.closed){engine=new Engine(context.getApplicationContext(),code);engines.put(key,engine);while(engines.size()>2){String oldest=engines.keySet().iterator().next();engines.remove(oldest).close();}}
+    if(engine==null||engine.closed||
+    (engine.signature==null&&engine.nName.isEmpty())){engine=new Engine(context.getApplicationContext(),code);engines.put(key,engine);while(engines.size()>2){String oldest=engines.keySet().iterator().next();engines.remove(oldest).close();}}
     return engine;
   }
   private static Signature signature(String code)throws Exception {
@@ -39,12 +40,11 @@ final class SnapTubePlayerScript {
     }return null;
   }
   private static String legacyN(String code)throws Exception {
-    boolean legacy=false;JSONArray markers=patterns.getJSONArray("legacyMarkers");for(int i=0;i<markers.length();i++)if(code.contains(markers.getString(i)))legacy=true;if(!legacy)return "";
     JSONArray values=patterns.getJSONArray("n");for(int i=0;i<values.length();i++){
       Matcher match=Pattern.compile(values.getString(i)).matcher(code);if(!match.find()||match.groupCount()<1)continue;String name=match.group(1);
       if(match.groupCount()>1&&match.group(2)!=null){Matcher array=Pattern.compile("var "+Pattern.quote(name)+"\\s*=\\s*\\[(.+?)][;,]",Pattern.DOTALL).matcher(code);if(!array.find())continue;String[] entries=array.group(1).split(",");int index=Integer.parseInt(match.group(2));if(index>=entries.length)continue;name=entries[index].trim();}
       if(name.matches("[\\w$]+"))return name;
-    }return "";
+            }return "";
   }
   private static String helperClass(String code,Signature signature){
     if(signature==null||!signature.helper)return "";int start=code.indexOf(signature.name+"=function");if(start<0)return "";

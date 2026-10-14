@@ -1,7 +1,7 @@
 [Setup]
 AppId={{0A5AF11E-1972-4381-98E3-73A0B257F238}
 AppName=Snagfox
-AppVersion=0.1.3
+AppVersion=0.1.4
 AppPublisher=Snagfox
 DefaultDirName={localappdata}\Programs\Snagfox
 DefaultGroupName=Snagfox

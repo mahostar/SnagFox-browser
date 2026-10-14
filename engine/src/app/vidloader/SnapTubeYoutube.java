@@ -25,6 +25,7 @@ final class SnapTubeYoutube {
   }
   static Client client(int route){
     switch(route){
+      case 6:return new Client("ANDROID","21.26.364","www.youtube.com","com.google.android.youtube/21.26.364 (Linux; U; Android 11) gzip",3,false,false);
       case 3:return new Client("VISIONOS","1.02","www.youtube.com","com.google.visionos.youtube/1.02(RealityDevice14,1; U; CPU visionOS 25_6_0 like Mac OS X;)",101,false,false);
       case 2:return new Client("WEB_REMIX","1.20260707.12.00","music.youtube.com",API_UA,67,true,true);
       case 4:return new Client("WEB_EMBEDDED_PLAYER","2.20260708.00.00","www.youtube.com",API_UA,0,true,false);
@@ -40,6 +41,7 @@ final class SnapTubeYoutube {
     JSONObject apiClient=new JSONObject().put("clientName",config.name).put("clientVersion",config.version).put("hl",Locale.getDefault().getLanguage()).put("gl",Locale.getDefault().getCountry()).put("userAgent",config.ua);
     if(!info.visitor.isEmpty())apiClient.put("visitorData",info.visitor);
     if(route==3)apiClient.put("deviceMake","Apple").put("deviceModel","RealityDevice14,1").put("osName","visionOS").put("osVersion","25.6.0.23O471").put("platform","MOBILE");
+    if(route==6)apiClient.put("androidSdkVersion",30).put("osName","Android").put("osVersion","11");
     JSONObject playback=new JSONObject().put("html5Preference","HTML5_PREF_WANTS");if(info.timestamp>0)playback.put("signatureTimestamp",info.timestamp);
     JSONObject request=new JSONObject().put("context",new JSONObject().put("client",apiClient)).put("videoId",id).put("contentCheckOk",true).put("racyCheckOk",true).put("playbackContext",new JSONObject().put("contentPlaybackContext",playback));
     if(route==4)request.getJSONObject("context").put("thirdParty",new JSONObject().put("embedUrl","https://www.youtube.com/"));
@@ -65,7 +67,7 @@ final class SnapTubeYoutube {
       if(!BrowserProtection.isWebUrl(url))continue;
       String n=Uri.parse(url).getQueryParameter("n");if(n!=null&&!n.isEmpty()){
         if(info.script.isEmpty()){info=page(context,page,true);}if(info.script.isEmpty())throw new IOException("Player throttling script unavailable");
-        String changed=SnapTubePlayerScript.throttling(context,info.baseJs,info.script,id,n);
+          String changed=SnapTubePlayerScript.throttling(context,info.baseJs,info.script,id,n);
         if(changed.isEmpty()||changed.equals(n))throw new IOException("Player throttling transformation failed");url=replaceQuery(url,"n",changed);
       }
       if(!token.isEmpty())url=replaceQuery(url,"pot",token);urls.put(item,url);

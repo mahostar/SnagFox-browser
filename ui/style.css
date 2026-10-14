@@ -6,7 +6,26 @@
 
 /* Stable, scrollable desktop tab strip. Only the blank titlebar is draggable. */
 [hidden]{display:none!important}
-#strip{-webkit-app-region:no-drag}.drag{-webkit-app-region:drag}
+
+/* Drag the empty title bar; double-click it to maximize/restore. */
+#strip {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.drag {
+  -webkit-app-region: drag;
+  min-width: 40px;
+}
+
+/* Keep tabs and buttons interactive. */
+#strip button,
+#tabrail,
+#tabs,
+.tabscroll {
+  -webkit-app-region: no-drag;
+}
+
 #tabrail{display:flex;flex:0 1 auto;min-width:0;max-width:calc(100vw - 240px);align-items:stretch;height:42px;overflow:hidden}
 #tabs{max-width:none;min-width:0;flex:1 1 auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
 #tabs::-webkit-scrollbar{display:none}#tabs .tab{flex:0 0 190px;min-width:140px;text-align:left;user-select:none}

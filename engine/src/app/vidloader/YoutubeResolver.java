@@ -46,7 +46,7 @@ final class YoutubeResolver {
       boolean authenticated=java.util.regex.Pattern.compile("(?:^|;\\s*)(?:SID|SAPISID|__Secure-1PAPISID)=").matcher(cookies).find();
       LinkedHashSet<Integer> routes=new LinkedHashSet<>();Integer good=preferred.get(session);if(good!=null)routes.add(good);
       // Recovered SnapTube dispatcher order; unsupported Onesie is not mislabeled as HTTP.
-      if(music)routes.add(2);routes.add(3);if(authenticated)routes.add(5);routes.add(4);routes.add(2);routes.add(0);
+      if(music)routes.add(2);routes.add(3);if(authenticated)routes.add(5);routes.add(4);routes.add(2);routes.add(6);routes.add(0);
       Exception last=new IOException("No usable formats");long started=SystemClock.elapsedRealtime();int count=0;
       for(int route:routes){
         if(Thread.currentThread().isInterrupted())throw new InterruptedException("Inspection cancelled");
@@ -59,7 +59,7 @@ final class YoutubeResolver {
           status.update("Checking media-server access…");
           List<MediaCandidate> ordinary=new ArrayList<>(),sabr=new ArrayList<>();for(MediaCandidate candidate:formats){if(candidate.kind==MediaCandidate.Kind.SABR)sabr.add(candidate);else ordinary.add(candidate);}
           try{verifyRepresentative(ordinary,music);formats=ordinary;}catch(Exception inaccessible){if(Thread.currentThread().isInterrupted()||inaccessible instanceof InterruptedException)throw inaccessible;if(sabr.isEmpty())throw inaccessible;formats=sabr;status.update("Preparing adaptive stream choices…");}
-          preferred.put(session,route);remember(key,formats);
+           if(route!=6)preferred.put(session,route);remember(key,formats);
           YoutubeDiagnostics.record(context,"extract","route="+route+" ready elapsedMs="+(SystemClock.elapsedRealtime()-started));
           return formats;
         }catch(Exception error){if(Thread.currentThread().isInterrupted()||error instanceof InterruptedException)throw error;last=error;YoutubeDiagnostics.record(context,"extract","route="+route+" "+safeError(error));}

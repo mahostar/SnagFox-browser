@@ -16,7 +16,7 @@ New-Item -ItemType Directory "$appRoot\engine" -Force | Out-Null
 Copy-Item engine\snagfox-engine.jar "$appRoot\engine" -Force
 Copy-Item engine\assets,engine\lib "$appRoot\engine" -Recurse -Force
 Copy-Item THIRD_PARTY_NOTICES.md "$appRoot" -Force
-& .\build-tools\rcedit.exe "$stage\Snagfox.exe" --set-icon ui\icon.ico --set-version-string ProductName Snagfox --set-version-string FileDescription 'Snagfox browser' --set-version-string CompanyName Snagfox --set-file-version 0.1.3.0 --set-product-version 0.1.3.0
+& .\build-tools\rcedit.exe "$stage\Snagfox.exe" --set-icon ui\icon.ico --set-version-string ProductName Snagfox --set-version-string FileDescription 'Snagfox browser' --set-version-string CompanyName Snagfox --set-file-version 0.1.4.0 --set-product-version 0.1.4.0
 if($LASTEXITCODE -ne 0){throw 'Executable branding failed'}
 & $Inno installer\Snagfox.iss
 if($LASTEXITCODE -ne 0){throw 'Installer compilation failed'}
