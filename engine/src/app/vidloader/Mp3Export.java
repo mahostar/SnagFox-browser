@@ -1,0 +1,1 @@
+package app.vidloader;import java.io.*;import java.util.*;final class Mp3Export{static void convert(File i,File o,int bitrate,MediaRemuxer.Checkpoint c,MediaRemuxer.Progress p)throws IOException{MediaRemuxer.run(Arrays.asList("-i",i.getAbsolutePath(),"-vn","-c:a","libmp3lame","-b:a",Math.max(64,Math.min(320,bitrate))+"k",o.getAbsolutePath()),c,p,"converting");}}

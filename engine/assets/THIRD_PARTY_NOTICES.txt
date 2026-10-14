@@ -1,0 +1,13 @@
+jump3r 1.0.5 - Java port of LAME
+Copyright The L.A.M.E. project, Ken Handel, Vadym Vikulin and contributors.
+LGPL-2.1-or-later. https://git.iem.at/sciss/jump3r
+Full license: jump3r_LGPL_2_1.txt. Unmodified JAR and corresponding published
+source JAR accompany the source bundle. Mp3Export uses Android MediaCodec for
+decoding and the portable encoder directly, without Java Sound dependencies.
+
+Other libraries: AndroidX WebKit/DrawerLayout and Airbnb Lottie retain their
+upstream notices in APK metadata. Host-rule attribution is retained separately
+in browser_threat_hosts_LICENSE.txt and the bundled rule-file headers.
+
+AndroidX Media3 1.11.1, Apache-2.0, https://github.com/androidx/media
+YouTube extraction no longer includes NewPipe or yt-dlp. SnapTube REA reconstruction evidence is in the source handoff documentation.

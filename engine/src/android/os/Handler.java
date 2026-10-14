@@ -1,0 +1,1 @@
+package android.os; import java.util.concurrent.*;public class Handler{private static final ScheduledExecutorService pool=Executors.newScheduledThreadPool(3);public Handler(Looper l){} public void post(Runnable r){pool.execute(r);}public void postDelayed(Runnable r,long ms){pool.schedule(r,ms,TimeUnit.MILLISECONDS);}}

@@ -1,0 +1,10 @@
+package android.webkit;
+import android.content.Context;import app.vidloader.DesktopBridge;import org.json.*;import java.util.*;
+public class WebView{
+ final String id=UUID.randomUUID().toString();final WebSettings settings=new WebSettings();WebViewClient client;Object bridge;public static final Map<String,WebView> views=new java.util.concurrent.ConcurrentHashMap<>();
+ public WebView(Context c){views.put(id,this);}public WebSettings getSettings(){return settings;}public void setWebViewClient(WebViewClient c){client=c;}public void addJavascriptInterface(Object b,String n){bridge=b;}public void removeJavascriptInterface(String n){bridge=null;}
+ public void loadDataWithBaseURL(String base,String html,String mime,String enc,String hist){try{DesktopBridge.ask("helperLoad",new JSONObject().put("view",id).put("html",html).put("userAgent",settings.userAgent));if(client!=null)client.onPageFinished(this,base);}catch(Exception e){throw new IllegalStateException(e);}}
+ public void evaluateJavascript(String code,ValueCallback<String> callback){try{String value=DesktopBridge.ask("helperEval",new JSONObject().put("view",id).put("code",code)).optString("value","null");if(callback!=null)callback.onReceiveValue(value);}catch(Exception e){if(callback!=null)callback.onReceiveValue("null");}}
+ public static void event(String id,String method,String value){WebView w=views.get(id);if(w==null||w.bridge==null||!Arrays.asList("snapshot","error").contains(method))return;try{java.lang.reflect.Method m=w.bridge.getClass().getDeclaredMethod(method,String.class);m.setAccessible(true);m.invoke(w.bridge,value);}catch(Exception e){System.err.println("Helper callback failed");}}
+ public void stopLoading(){}public void destroy(){views.remove(id);DesktopBridge.emit(new JSONObject().put("event","helperClose").put("view",id));}
+}

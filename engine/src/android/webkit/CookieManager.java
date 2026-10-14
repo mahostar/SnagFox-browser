@@ -1,0 +1,3 @@
+package android.webkit;
+import app.vidloader.DesktopBridge;import org.json.*;
+public class CookieManager{private static final CookieManager instance=new CookieManager();public static CookieManager getInstance(){return instance;}public String getCookie(String url){try{return DesktopBridge.ask("cookieGet",new JSONObject().put("url",url)).optString("value");}catch(Exception e){throw new IllegalStateException("Browser cookie session unavailable",e);}}public void setCookie(String url,String cookie){try{DesktopBridge.ask("cookieSet",new JSONObject().put("url",url).put("cookie",cookie));}catch(Exception e){throw new IllegalStateException(e);}}}

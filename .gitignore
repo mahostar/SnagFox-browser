@@ -1,0 +1,14 @@
+/delivery/
+/runtime/
+/vendor/
+/build-tools/
+/tools/*.exe
+/reference/
+/verification/
+/engine/classes/
+/engine/sources.txt
+/engine/snagfox-engine.jar
+/*.m4s
+/*.zip
+*.stdout
+*.stderr

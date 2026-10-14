@@ -1,0 +1,2 @@
+const {contextBridge,ipcRenderer}=require('electron');
+contextBridge.exposeInMainWorld('snagMenu',{data:()=>ipcRenderer.invoke('menu-data'),choose:index=>ipcRenderer.invoke('menu-choose',index),close:()=>ipcRenderer.invoke('menu-close')});

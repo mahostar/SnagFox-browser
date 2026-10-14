@@ -1,0 +1,6 @@
+{
+  "name": "snagfox",
+  "version": "0.1.3",
+  "main": "main.cjs",
+  "private": true
+}

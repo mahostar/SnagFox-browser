@@ -1,0 +1,11 @@
+package android.net;
+import java.net.*;import java.util.*;import java.nio.charset.StandardCharsets;
+public class Uri {
+ final String value;Uri(String s){value=s;}public static Uri parse(String s){return new Uri(s);}private URI u(){return URI.create(value);}
+ public String getHost(){return u().getHost();}public String getScheme(){return u().getScheme();}public String getPath(){return u().getPath();}public String toString(){return value;}
+ public String getQueryParameter(String k){List<String> v=getQueryParameters(k);return v.isEmpty()?null:v.get(0);}public Set<String> getQueryParameterNames(){return params().keySet();}public List<String> getQueryParameters(String k){return params().getOrDefault(k,Collections.emptyList());}
+ Map<String,List<String>> params(){Map<String,List<String>> p=new LinkedHashMap<>();String q=u().getRawQuery();if(q!=null)for(String s:q.split("&")){String[] kv=s.split("=",2);p.computeIfAbsent(decode(kv[0]),x->new ArrayList<>()).add(kv.length>1?decode(kv[1]):"");}return p;}
+ public List<String> getPathSegments(){List<String> p=new ArrayList<>();for(String s:Optional.ofNullable(getPath()).orElse("").split("/"))if(!s.isEmpty())p.add(s);return p;}
+ public static String decode(String s){return URLDecoder.decode(s,StandardCharsets.UTF_8);}public static String encode(String s){return URLEncoder.encode(s,StandardCharsets.UTF_8).replace("+","%20");}public Builder buildUpon(){return new Builder(value);}
+ public static class Builder{String base,fragment;List<String> q=new ArrayList<>();Builder(String s){int h=s.indexOf('#');fragment=h<0?"":s.substring(h);if(h>=0)s=s.substring(0,h);int i=s.indexOf('?');base=i<0?s:s.substring(0,i);if(i>=0)q.addAll(Arrays.asList(s.substring(i+1).split("&")));}public Builder clearQuery(){q.clear();return this;}public Builder appendQueryParameter(String k,String v){q.add(encode(k)+"="+encode(v));return this;}public Uri build(){return parse(toString());}public String toString(){return base+(q.isEmpty()?"":"?"+String.join("&",q))+fragment;}}
+}

@@ -1,0 +1,1 @@
+package android.webkit; import java.lang.annotation.*;@Retention(RetentionPolicy.RUNTIME)public @interface JavascriptInterface{}

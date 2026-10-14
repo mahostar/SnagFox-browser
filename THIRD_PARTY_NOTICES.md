@@ -1,0 +1,15 @@
+# Bundled runtime and engine notices
+
+The owner has authorized a private repository and private release assets for `mahostar/SnagFox-browser`. Keep that repository and its binary/build-input releases private. The component license files below remain bundled; this notice does not replace them.
+
+**Electron 44.7.0 and Chromium.** `vendor/electron/LICENSE` and `LICENSES.chromium.html` are retained beside `Snagfox.exe` in the installed application. Upstream: https://github.com/electron/electron .
+
+**Eclipse Temurin OpenJDK 17.0.19+10.** The jlink runtime retains `runtime/legal`, including GPLv2 with Classpath Exception and component notices. No separate Java installation is needed to run Snagfox. Upstream release information: https://github.com/adoptium/temurin17-binaries . The exact Temurin corresponding-source package for the bundled runtime has not been prepared for public redistribution; the upstream link alone is not that package.
+
+**FFmpeg.** The unmodified Windows executable runs as a separate process. `tools/FFmpeg-COPYING.txt` retains this build's GPLv3 license. Local version/configuration evidence is recorded in `verification/toolchain.txt`; that evidence directory is excluded from Git. Upstream and build-provider information: https://ffmpeg.org and https://www.gyan.dev/ffmpeg/builds/ . Exact corresponding source for this FFmpeg build, its enabled dependencies, and the scripts needed to reproduce it have not been prepared for public redistribution. Generic upstream/provider links are insufficient. Prepare those exact source and build materials, plus the exact Temurin corresponding sources and applicable notices, before any public binary release. Private visibility does not waive component license obligations.
+
+**JSON-java 20180813.** `org.json` classes originate from the locally cached Gradle jar; upstream: https://github.com/stleary/JSON-java . Copyright JSON.org contributors. The software shall be used for Good, not Evil. The software is provided as is, without warranty. Cached-jar provenance is recorded locally in `verification/source-manifest.json`.
+
+**Preserved engine assets.** Retain `engine/assets/THIRD_PARTY_NOTICES.txt`, `browser_threat_hosts_LICENSE.txt`, host-rule attribution and `jump3r_LGPL_2_1.txt`. Original mobile notices describe the mobile implementation, rather than additional Windows dependencies. jump3r binary/source references stay in local `reference/licenses`; neither is required or bundled in the Windows installer. Desktop MP3 encoding uses FFmpeg's libmp3lame. Android UI libraries are not Windows runtime dependencies.
+
+Snagfox Java sources and approved artwork were copied from the owner's local mobile project. Third-party reference applications and raw analysis dumps are excluded from the installer and private source repository. No NewPipe or yt-dlp binaries are included.
