@@ -59,3 +59,35 @@
 .bars i{transition:width .25s linear}@media(prefers-reduced-motion:reduce){.bars i{transition:none}}
 
 #engineError{position:fixed;top:94px;left:10px;max-width:min(620px,calc(100vw - 20px));padding:10px 14px;border:1px solid #ba5361;border-radius:0 0 7px 7px;background:#351c24;color:#ffd9df;font-size:13px;line-height:1.5;overflow-wrap:anywhere;box-shadow:0 4px 16px #0003;z-index:4;pointer-events:none}body.light #engineError{background:#fff0f2;color:#812335;border-color:#cd7583}
+
+/* Keep recent page titles within their card; full values remain in the tooltip and link. */
+.recent-heading{align-items:center;gap:12px}.recent-heading h2{margin:0}.recent-heading button,#recent button{flex-shrink:0}#recent .grow{min-width:0}#recent .recent-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---- Home page polish ---- */
+/* Shortcut icons fill their circle and react on hover. */
+.shortcuts b{padding:0;overflow:hidden;display:grid;place-items:center;font-size:0}
+.shortcuts b img{display:block;width:100%;height:100%}
+.shortcuts button:hover b,.shortcuts button:focus-visible b{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue),transparent 78%)}
+
+/* Search bar: input + secondary Paste + primary Go. */
+.search .paste-btn{background:transparent;white-space:nowrap}
+.search .go-btn{min-width:64px;font-weight:600;white-space:nowrap}
+.search:focus-within{border-color:var(--blue)}
+.search input:focus{outline:0}
+
+/* Keep the home content in a readable column on wide screens. */
+.homehero,.homehero~*{max-width:1060px;margin-left:auto;margin-right:auto}
+
+/* Shortcut cards: bigger icon, label, chevron pushed to the right. */
+.homepages button{display:flex;align-items:center;gap:12px}
+.homepages .hp-icon{font-size:20px;line-height:1;color:var(--blue);width:24px;text-align:center}
+.homepages .hp-label{flex:1;font-size:15px}
+.homepages .hp-chev{font-size:24px;line-height:1;color:var(--muted)}
+.homepages button:hover .hp-chev{color:var(--blue)}
+
+/* Inline download icon in the hint reads like the toolbar button. */
+.hint-icon{display:inline-block;padding:0 7px;border:1px solid var(--blue);border-radius:5px;color:var(--blue);font-weight:700;line-height:1.35}
+
+/* Recently visited: larger, clearer open button. */
+#recent .recent-open{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;font-size:26px;line-height:1;color:var(--muted)}
+#recent .recent-open:hover,#recent .recent-open:focus-visible{color:var(--blue)}

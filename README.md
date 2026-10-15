@@ -1,4 +1,4 @@
-# Snagfox for Windows — 0.1.3
+# Snagfox for Windows — 0.1.5
 
 Install `Snagfox-Setup.exe` from the matching **private** release of `mahostar/SnagFox-browser`. Chromium/Electron, a Temurin Java 17 runtime and FFmpeg are bundled; users do not need development tools to run the app.
 

@@ -40,6 +40,7 @@ public final class DownloadService extends Context {
     final DownloadStore.Task task;
     volatile boolean stopped;
     volatile HttpURLConnection active;
+    String directResponseUrl = "";
     final Set<HttpURLConnection> connections = ConcurrentHashMap.newKeySet();
     final RecoveryGate recovery = new RecoveryGate();
     final ConcurrentHashMap<HttpURLConnection,RecoveryGate.Lease> leases = new ConcurrentHashMap<>();
@@ -91,6 +92,7 @@ public final class DownloadService extends Context {
             else if (task.kind.equals("DASH") && !task.segments.isEmpty()) output = dash();
             else if (!task.audioUrl.isEmpty() || !task.audioSegments.isEmpty()) output = directWithAudio();
             else output = direct();
+            if (task.kind.equals("DIRECT") && task.youtubePage.isEmpty()) output = directManifest(output);
             if(task.mime.equals("application/x-subrip")){
               try(InputStream input=new FileInputStream(output)){byte[] prefix=new byte[(int)Math.min(output.length(),16384)];int count=input.read(prefix);String preview=count<0?"":new String(prefix,0,count,StandardCharsets.UTF_8);if(!preview.contains("-->"))throw new IOException("Subtitle server returned no SRT cues");}
             }
@@ -422,6 +424,7 @@ public final class DownloadService extends Context {
         offset = 0;
         task.total = active.getContentLengthLong();
       }
+      directResponseUrl = active.getURL().toString();
       mediaResponse(active);
       long received = 0;
       try (InputStream in = active.getInputStream();
@@ -468,6 +471,7 @@ public final class DownloadService extends Context {
       try {
         int status = probe.getResponseCode();
         if (status != 206) { parallelRejected = true; return null; }
+        directResponseUrl = probe.getURL().toString();
         mediaResponse(probe);
         Matcher range = Pattern.compile("bytes 0-0/(\\d+)").matcher(Optional.ofNullable(probe.getHeaderField("Content-Range")).orElse(""));
         validator = Optional.ofNullable(probe.getHeaderField("ETag")).orElse("");
@@ -589,6 +593,57 @@ public final class DownloadService extends Context {
       check();
       packageTracks(video, audio, output);
       return output;
+    }
+
+    /** A media-looking address can return a playlist. Keep its bytes out of direct finalization. */
+    File directManifest(File output) throws Exception {
+      check();
+      byte[] prefix;
+      try (InputStream input = new FileInputStream(output)) { prefix = input.readNBytes(8192); }
+      String detected = MediaResponseProbe.classify("", prefix);
+      if (detected.equals("application/dash+xml"))
+        throw new IOException("This address returned a DASH manifest. Inspect the page again to select its media tracks.");
+      if (!detected.contains("mpegurl")) return output;
+      if (output.length() > 8 * 1024 * 1024)
+        throw new IOException("The returned HLS playlist exceeds the supported size");
+      String text = Files.readString(output.toPath(), StandardCharsets.UTF_8);
+      String base = directResponseUrl.isEmpty() ? task.url : directResponseUrl;
+      List<MediaCandidate> formats = MediaParser.parseHls(text, base, task.title);
+      MediaCandidate selected = null;
+      for (MediaCandidate candidate : formats) {
+        if (!candidate.isDownloadable()) continue;
+        if (selected == null || candidate.height > selected.height
+            || (candidate.height == selected.height && candidate.bandwidth > selected.bandwidth)) selected = candidate;
+      }
+      if (selected == null) throw new IOException("The returned HLS playlist has no supported media tracks");
+      // Reuse a finite media playlist; don't repeat a one-use or signed request.
+      boolean mediaPlaylist = !ManifestEnvelope.unwrap(text).contains("#EXT-X-STREAM-INF");
+      if (mediaPlaylist) {
+        HlsPlaylist playlist = HlsPlaylist.parse(text, base);
+        if (playlist.ended) {
+          File dir = new File(store.work(task), "video");
+          dir.mkdirs();
+          writeJson(new File(dir, "playlist.snapshot"), new JSONObject().put("url", selected.url)
+              .put("base", base).put("text", text).put("sha256", hash(text)));
+        }
+      }
+      String selectedCookie = Optional.ofNullable(android.webkit.CookieManager.getInstance().getCookie(selected.url)).orElse("");
+      synchronized (task) {
+        check();
+        if (!DesktopBridge.origin(task.url).equalsIgnoreCase(DesktopBridge.origin(selected.url))) task.extractorHeaders.clear();
+        task.cookie = selectedCookie;
+        task.audioExtractorHeaders.clear();
+        task.url = selected.url;
+        task.audioUrl = selected.audioUrl;
+        task.kind = "HLS_MEDIA";
+        task.total = -1;
+        task.bytes = 0;
+        task.etag = "";
+        task.completedSegments = 0;
+        task.segmentCount = 0;
+        update(task);
+      }
+      return hls();
     }
 
     File hls() throws Exception {
